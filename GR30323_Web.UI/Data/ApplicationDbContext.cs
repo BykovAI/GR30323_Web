@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GR30323_Web.UI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

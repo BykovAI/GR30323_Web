@@ -1,5 +1,12 @@
-﻿@await Component.InvokeAsync("Cart")
+﻿@using GR30323_Web.UI.Data
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
 
+@using System.Security.Claims;
+@if (User.Identity.IsAuthenticated)
+@* @if (SignInManager.IsSignedIn(User)) *@
+{
+@await Component.InvokeAsync("Cart")
 <div class="dropdown ms-4 nav-color">
     <button class="btn btn-secondary dropdown-toggle"
             type="button" id="dropdownMenuButton"
@@ -23,3 +30,15 @@
         </li>
     </ul>
 </div>
+}
+else
+{
+    <ul class="nav nav-color">
+    <li class="nav-item ms-auto">
+            <a class="nav-item nav-link active" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </li>
+    <li class="nav-item nav-color">
+            <a class="nav-item nav-link active" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </li>
+    </ul>
+}
