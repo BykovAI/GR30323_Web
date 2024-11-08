@@ -3,8 +3,20 @@
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
+@if (User.Identity.IsAuthenticated)
+{
+    <a asp-area="Identity" asp-page="/Account/Logout">Logout</a>
+}
+else
+{
+    <a asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <a asp-area="Identity" asp-page="/Account/Register">Register</a>
+}
+
+
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
+    @if (User.Identity.IsAuthenticated)
+@* @if (SignInManager.IsSignedIn(User)) *@
 {
     <li class="nav-item">
         <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>

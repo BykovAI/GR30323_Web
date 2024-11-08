@@ -1,4 +1,5 @@
 using GR30323_Web.UI.Data;
+using GR30323_Web.UI.Data.WebLabsV03.UI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -53,11 +54,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+await DbInit.SeedData(app);
 
 app.Run();

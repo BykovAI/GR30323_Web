@@ -13,16 +13,16 @@
             data-bs-toggle="dropdown"
             aria-expanded="false">
         <img src="images/default-picture.png" width="30" alt="User" class="rounded-circle me-2" />
-        User@gmail.com
+            @User.Identity.Name
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <li class="dropdown-item">
             <img src="images/default-picture.png" width="50" alt="User" class="rounded-circle me-2" />
-            User@gmail.com
+            @User.Identity.Name
         </li>
         <li><hr class="dropdown-divider"></li>
         <li>
-            <form id="logoutForm" action="/Account/Logout" method="post">
+                <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnurl="/" method="post">
                 <button id="logout" type="submit" class="nav-link btn btn-link text-dark">
                     Logout
                 </button>
