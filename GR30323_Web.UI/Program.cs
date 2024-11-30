@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using GR30323_Web.Domain.Services.CategoryService;
+using GR30323_Web.Domain.Services.ProductService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,12 @@ builder.Services.AddAuthorization(opt =>
 builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();
 
 builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
+
+// Регистрируем ICategoryService как scoped
+builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
+
+// Регистрируем IProductService как scoped
+builder.Services.AddScoped<IProductService, MemoryProductService>();
 
 var app = builder.Build();
 
