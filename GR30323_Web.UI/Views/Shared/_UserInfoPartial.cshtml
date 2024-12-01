@@ -12,12 +12,12 @@
             type="button" id="dropdownMenuButton"
             data-bs-toggle="dropdown"
             aria-expanded="false">
-        <img src="images/default-picture.png" width="30" alt="User" class="rounded-circle me-2" />
+            <img img-action="GetAvatar" img-controller="Image" width="30" alt="User" class="rounded-circle me-2" />
             @User.Identity.Name
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <li class="dropdown-item">
-            <img src="images/default-picture.png" width="50" alt="User" class="rounded-circle me-2" />
+                <img src="@Url.Action("GetAvatar","Image")" width="50" alt="User" class="rounded-circle me-2" />
             @User.Identity.Name
         </li>
         <li><hr class="dropdown-divider"></li>

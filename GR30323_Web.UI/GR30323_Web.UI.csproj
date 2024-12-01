@@ -32,4 +32,8 @@
     <ProjectReference Include="..\GR30323_Web.Domain\GR30323_Web.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
 </Project>

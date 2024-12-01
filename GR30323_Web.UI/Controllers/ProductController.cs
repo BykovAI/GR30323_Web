@@ -1,4 +1,6 @@
-﻿using GR30323_Web.Domain.Services.CategoryService;
+﻿using GR30323_Web.Domain.Entities;
+using GR30323_Web.Domain.Models;
+using GR30323_Web.Domain.Services.CategoryService;
 using GR30323_Web.Domain.Services.ProductService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,33 +17,38 @@ namespace GR30323_Web.UI.Controllers
             _categoryService = categoryService;
         }
 
-        public async Task<IActionResult> Index(string? category)
+        [Route("Catalog")]
+        [Route("Catalog/{category}")]
+        public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
-            // получить список категорий 
-            var categoriesResponse = await
-        _categoryService.GetCategoryListAsync();
-
-            // если список не получен, вернуть код 404 
+            // Получаем список категорий
+            var categoriesResponse = await _categoryService.GetCategoryListAsync();
             if (!categoriesResponse.Success)
+            {
                 return NotFound(categoriesResponse.ErrorMessage);
+            }
 
-            // передать список категорий во ViewData        
+            // Передаем категории в ViewData
             ViewData["categories"] = categoriesResponse.Data;
 
-            // передать во ViewData имя текущей категории 
-            var currentCategory = category == null
-                ? "Все"
-                : categoriesResponse.Data.FirstOrDefault(c =>
-        c.NormalizedName == category)?.Name;
-            ViewData["currentCategory"] = currentCategory;
+            // Получаем список продуктов с пагинацией
+            var productsResponse = await _productService.GetProductListAsync(category, pageNo);
+            if (!productsResponse.Success)
+            {
+                ViewData["Error"] = productsResponse.ErrorMessage;
+            }
 
+            // Создаем модель для передачи в представление, которая включает в себя данные о текущей странице и количестве страниц
+            var listModel = new ListModel<Car>
+            {
+                Items = productsResponse.Data.Items,
+                CurrentPage = pageNo,
+                TotalPages = productsResponse.Data.TotalPages
+            };
 
-            var productResponse =
-                        await
-        _productService.GetProductListAsync(category);
-            if (!productResponse.Success)
-                ViewData["Error"] = productResponse.ErrorMessage;
-            return View(productResponse.Data.Items);
+            // Возвращаем модель ListModel<Car> в представление
+            return View(listModel);
         }
+
     }
 }
