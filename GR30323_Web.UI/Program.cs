@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using GR30323_Web.Domain.Services.CategoryService;
 using GR30323_Web.Domain.Services.ProductService;
+using GR30323_Web.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,22 @@ builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
 
 // Регистрируем IProductService как scoped
 builder.Services.AddScoped<IProductService, MemoryProductService>();
+
+// Регистрация HttpClient для IProductService
+builder.Services.AddHttpClient<IProductService, ApiProductService>(opt =>
+    opt.BaseAddress = new Uri("https://localhost:7002/api/cars/"));
+
+// Регистрация HttpClient для ICategoryService
+builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
+    opt.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.MaxDepth = 64; // Увеличьте максимальную глубину, если необходимо
+    });
+
 
 var app = builder.Build();
 

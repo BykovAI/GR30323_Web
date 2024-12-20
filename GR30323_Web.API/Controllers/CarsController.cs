@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GR30323_Web.API.Data;
 using GR30323_Web.Domain.Entities;
+using GR30323_Web.Domain.Models;
 
 namespace GR30323_Web.API.Controllers
 {
@@ -23,10 +24,46 @@ namespace GR30323_Web.API.Controllers
 
         // GET: api/Cars
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Car>>> GetCars()
+        public async Task<ActionResult<ResponseData<ListModel<Car>>>> GetCars(
+            [FromQuery] string? categoryNormalizedName,
+            [FromQuery] int pageNo = 1,
+            [FromQuery] int pageSize = 3)
         {
-            return await _context.Cars.ToListAsync();
+            var response = new ResponseData<ListModel<Car>>();
+
+            // Формируем базовый запрос
+            var query = _context.Cars.Include(c => c.Category).AsQueryable();
+
+            // Фильтрация по категории (если указана)
+            if (!string.IsNullOrEmpty(categoryNormalizedName))
+            {
+                query = query.Where(c => c.Category.NormalizedName == categoryNormalizedName);
+            }
+
+            // Общий подсчёт записей для пагинации
+            int totalItems = await query.CountAsync();
+
+            // Пагинация
+            var cars = await query
+                .Skip((pageNo - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Формируем результат
+            var result = new ListModel<Car>
+            {
+                Items = cars,
+                CurrentPage = pageNo,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            };
+
+            response.Data = result;
+            response.Success = cars.Any();
+            response.ErrorMessage = cars.Any() ? null : "Нет автомобилей для заданных условий.";
+
+            return Ok(response);
         }
+
 
         // GET: api/Cars/5
         [HttpGet("{id}")]
