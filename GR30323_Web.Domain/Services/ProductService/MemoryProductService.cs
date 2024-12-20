@@ -2,6 +2,7 @@
 using GR30323_Web.Domain.Models;
 using GR30323_Web.Domain.Services.CategoryService;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +78,74 @@ namespace GR30323_Web.Domain.Services.ProductService
                 Data = car,
                 Success = car != null,
                 ErrorMessage = car == null ? "Автомобиль не найден" : null
+            });
+        }
+
+        public Task<ResponseData<Car>> AddCarAsync(Car car, IFormFile? image)
+        {
+            car.Id = _cars.Max(c => c.Id) + 1;
+            if (image != null)
+            {
+                car.Image = "Images/" + image.FileName;  // Пример: сохраняем изображение в папке Images
+            }
+
+            _cars.Add(car);
+
+            return Task.FromResult(new ResponseData<Car>
+            {
+                Success = true,
+                Data = car
+            });
+        }
+
+        public Task<ResponseData<Car>> UpdateCarAsync(Car car, IFormFile? image)
+        {
+            var existingCar = _cars.FirstOrDefault(c => c.Id == car.Id);
+
+            if (existingCar == null)
+            {
+                return Task.FromResult(new ResponseData<Car>
+                {
+                    Success = false,
+                    ErrorMessage = "Автомобиль не найден"
+                });
+            }
+
+            existingCar.Name = car.Name;
+            existingCar.Description = car.Description;
+            existingCar.Price = car.Price;
+            existingCar.CategoryId = car.CategoryId;
+
+            if (image != null)
+            {
+                existingCar.Image = "Images/" + image.FileName;  // Обновляем изображение
+            }
+
+            return Task.FromResult(new ResponseData<Car>
+            {
+                Success = true,
+                Data = existingCar
+            });
+        }
+
+        public Task<ResponseData<Car>> DeleteCarAsync(int id)
+        {
+            var car = _cars.FirstOrDefault(c => c.Id == id);
+
+            if (car == null)
+            {
+                return Task.FromResult(new ResponseData<Car>
+                {
+                    Success = false,
+                    ErrorMessage = "Автомобиль не найден"
+                });
+            }
+
+            _cars.Remove(car);
+
+            return Task.FromResult(new ResponseData<Car>
+            {
+                Success = true
             });
         }
     }

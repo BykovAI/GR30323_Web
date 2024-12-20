@@ -1,28 +1,25 @@
 ﻿using GR30323_Web.Domain.Entities;
 using GR30323_Web.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 namespace GR30323_Web.Domain.Services.ProductService
 {
     public interface IProductService
     {
-        /// <summary>
-        /// Получение списка всех автомобилей с фильтрацией по категориям.
-        /// </summary>
-        /// <param name="categoryNormalizedName">Имя категории для фильтрации (или null для всех категорий).</param>
-        /// <param name="pageNo">Номер страницы.</param>
-        /// <returns>Список автомобилей.</returns>
+        // Получение списка автомобилей
         Task<ResponseData<ListModel<Car>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1);
 
-        /// <summary>
-        /// Получение автомобиля по ID.
-        /// </summary>
-        /// <param name="id">Идентификатор автомобиля.</param>
-        /// <returns>Найденный автомобиль или null.</returns>
+        // Получение автомобиля по ID
         Task<ResponseData<Car>> GetProductByIdAsync(int id);
+
+        // Добавление нового автомобиля
+        Task<ResponseData<Car>> AddCarAsync(Car car, IFormFile? image);
+
+        // Обновление данных автомобиля
+        Task<ResponseData<Car>> UpdateCarAsync(Car car, IFormFile? image);
+
+        // Удаление автомобиля
+        Task<ResponseData<Car>> DeleteCarAsync(int id);
     }
 }
